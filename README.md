@@ -1,7 +1,9 @@
 # maesk_vba_emma
 Emma's VBA Tools
+Excel SAP vba的相关工具方法
 
-Excel SAP vba的相关工具算法
-1. 新建model，复制tools.txt 全部代码进model中
-2. 根据说明来调用
+如何使用
+1. 在Excel的VBA中新建model
+2. 复制tools.txt 全部代码进model中
+3. 根据说明来调用里面的Function或Sub
 
