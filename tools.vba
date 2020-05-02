@@ -37,13 +37,12 @@ Public Const HH = vbCrLf
 #End If
 
 
-' ******************
-' *                *
-' * function blow  *
-' *                *
-' ******************
+' ******************************************************
+' *                                                    *
+' *                 function blow                      *
+' *                                                    *
+' ******************************************************
 '
-
 
 '
 ' DESCRIPTION:
@@ -51,7 +50,7 @@ Public Const HH = vbCrLf
 ' 调用 例子
 ' HUGA = ESessionCheck(session, "wnd[2]/usr/txtMESSTXT2")
 '      等价于 HUGA = session.findById( "wnd[2]/usr/txtMESSTXT2").Text
-'如果报错则返回 空字符  ""
+' 如果报错则返回 空字符  ""
 Function ESessionCheck(session As Variant, title As String) As String
 On Error GoTo errline
 ESessionCheck = session.findById(title).Text
@@ -59,27 +58,16 @@ ESessionCheck = session.findById(title).Text
 If False Then
 errline:
 ESessionCheck = ""
- 
 End If
-
-
 
 End Function
 
-
-
-
-
-
-
-' *************
-' *           *
-' * sub blow  *
-' *           *
-' *************
+' ******************************************************
+' *                                                    *
+' *                  sub blow                          *
+' *                                                    *
+' ******************************************************
 '
-
-
 
 '
 ' DESCRIPTION:
@@ -92,7 +80,6 @@ Sub ECopyNew(MyString As String)
             .PutInClipboard
         End With
     #Else
-
         #If VBA7 Then
             Dim hGlobalMemory As LongPtr
             Dim hClipMemory   As LongPtr
