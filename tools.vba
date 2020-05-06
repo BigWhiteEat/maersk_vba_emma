@@ -90,26 +90,23 @@ Sub ECopyNew(MyString As String)
             Dim lpGlobalMemory    As Long
         #End If
         Dim x   As Long
-        ' Allocate moveable global memory.
-        '-------------------------------------------
+        
         hGlobalMemory = GlobalAlloc(GHND, LenB(StrConv(MyString, vbFromUnicode)) + 1)
-        ' Lock the block to get a far pointer to this memory.
         lpGlobalMemory = GlobalLock(hGlobalMemory)
-        ' Copy the string to this global memory.
         lpGlobalMemory = lstrcpy(lpGlobalMemory, MyString)
-        ' Unlock the memory.
+
         If GlobalUnlock(hGlobalMemory) <> 0 Then
             MsgBox "Could not unlock memory location. Copy aborted."
             GoTo OutOfHere2
         End If
-        ' Open the Clipboard to copy data to.
+
         If OpenClipboard(0&) = 0 Then
             MsgBox "Could not open the Clipboard. Copy aborted."
             Exit Sub
         End If
-        ' Clear the Clipboard.
+
         x = EmptyClipboard()
-        ' Copy the data to the Clipboard.
+
         hClipMemory = SetClipboardData(CF_TEXT, hGlobalMemory)
 OutOfHere2:
         If CloseClipboard() = 0 Then
