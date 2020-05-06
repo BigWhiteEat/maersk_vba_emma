@@ -42,6 +42,12 @@ Private Const CP_UTF8 = 65001 ' default to UTF-8 code page
 
     #End If
 
+' ******************************************************
+' *                                                    *
+' *                 function blow                      *
+' *                                                    *
+' ******************************************************
+'
 
 'string to UTF8
 Public Function EncodeToBytes(ByVal sData As String) As Byte() ' Note: Len(sData) > 0
@@ -66,14 +72,6 @@ Public Function DecodeToBytes(ByVal sData As String) As Byte() ' Note: Len(sData
     DecodeToBytes = aRetn
     Erase aRetn
 End Function
-
-
-' ******************************************************
-' *                                                    *
-' *                 function blow                      *
-' *                                                    *
-' ******************************************************
-'
 
 '
 ' DESCRIPTION:
