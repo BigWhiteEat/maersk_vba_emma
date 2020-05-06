@@ -9,6 +9,8 @@ Public Const GHND = &H42
 Public Const CF_TEXT = 1
 Public Const MAXSIZE = 4096
 Public Const HH = vbCrLf
+Private Const CP_ACP = 0 ' default to ANSI code page
+Private Const CP_UTF8 = 65001 ' default to UTF-8 code page
 
 #If Mac Then
     ' ignore
@@ -35,6 +37,38 @@ Public Const HH = vbCrLf
     #End If
 
 #End If
+                                                                
+#If Win64 And VBA7 Then
+    Private Declare PtrSafe Function MultiByteToWideChar Lib "kernel32 " (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As LongPtr, ByVal cchMultiByte As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long) As Long
+    Private Declare PtrSafe Function WideCharToMultiByte Lib "kernel32 " (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long, ByVal lpMultiByteStrPtr As LongPtr, ByVal cchMultiByte As Long, ByVal lpDefaultChar As LongPtr, ByVal lpUsedDefaultChar As LongPtr) As Long
+#Else
+    Private Declare  Function MultiByteToWideChar Lib "kernel32 " (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As Long, ByVal cchMultiByte As Long, ByVal lpWideCharStr As Long, ByVal cchWideChar As Long) As Long
+    Private Declare  Function WideCharToMultiByte Lib "kernel32 " (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpWideCharStr As Long, ByVal cchWideChar As Long, ByVal lpMultiByteStr As Long, ByVal cchMultiByte As Long, ByVal lpDefaultChar As Long, ByVal lpUsedDefaultChar As Long) As Long
+#End If
+
+'string to UTF8
+Public Function EncodeToBytes(ByVal sData As String) As Byte() ' Note: Len(sData) > 0
+    Dim aRetn() As Byte
+    Dim nSize As Long
+    nSize = WideCharToMultiByte(CP_UTF8, 0, StrPtr(sData), -1, 0, 0, 0, 0) - 1
+    If nSize = 0 Then Exit Function
+    ReDim aRetn(0 To nSize - 1) As Byte
+    WideCharToMultiByte CP_UTF8, 0, StrPtr(sData), -1, VarPtr(aRetn(0)), nSize, 0, 0
+    EncodeToBytes = aRetn
+    Erase aRetn
+End Function
+
+' UTF8 to string
+Public Function DecodeToBytes(ByVal sData As String) As Byte() ' Note: Len(sData) > 0
+    Dim aRetn() As Byte
+    Dim nSize As Long
+    nSize = MultiByteToWideChar(CP_UTF8, 0, StrPtr(sData), -1, 0, 0) - 1
+    If nSize = 0 Then Exit Function
+    ReDim aRetn(0 To 2 * nSize - 1) As Byte
+    MultiByteToWideChar CP_UTF8, 0, StrPtr(sData), -1, VarPtr(aRetn(0)), nSize
+    DecodeToBytes = aRetn
+    Erase aRetn
+End Function
 
 
 ' ******************************************************
@@ -90,10 +124,10 @@ Sub ECopyNew(MyString As String)
             Dim lpGlobalMemory    As Long
         #End If
         Dim x   As Long
-        
+                                                                                       
         hGlobalMemory = GlobalAlloc(GHND, LenB(StrConv(MyString, vbFromUnicode)) + 1)
         lpGlobalMemory = GlobalLock(hGlobalMemory)
-        lpGlobalMemory = lstrcpy(lpGlobalMemory, MyString)
+        lpGlobalMemory = lstrcpy(lpGlobalMemory, EncodeToBytes(MyString))
 
         If GlobalUnlock(hGlobalMemory) <> 0 Then
             MsgBox "Could not unlock memory location. Copy aborted."
