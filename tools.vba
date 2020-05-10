@@ -124,7 +124,7 @@ Sub ECopyNew(MyString As String)
                                                                                        
         hGlobalMemory = GlobalAlloc(GHND, LenB(StrConv(MyString, vbFromUnicode)) + 1)
         lpGlobalMemory = GlobalLock(hGlobalMemory)
-        lpGlobalMemory = lstrcpy(lpGlobalMemory, EncodeToBytes(MyString))
+        lpGlobalMemory = lstrcpy(lpGlobalMemory, MyString)
 
         If GlobalUnlock(hGlobalMemory) <> 0 Then
             MsgBox "Could not unlock memory location. Copy aborted."
